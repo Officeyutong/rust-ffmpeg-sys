@@ -227,7 +227,9 @@ fn build() -> io::Result<()> {
         configure.arg("--disable-debug");
         configure.arg("--enable-stripping");
     }
-
+    if let Ok(v) = env::var("RUST_FFMPEG_PKGCONF"){
+        configure.arg(format!("--pkg-config={}",v));
+    }
     // make it static
     configure.arg("--enable-static");
     configure.arg("--disable-shared");
