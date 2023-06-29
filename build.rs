@@ -215,7 +215,13 @@ fn build() -> io::Result<()> {
         ));
         configure.arg(format!(
             "--target_os={}",
-            env::var("CARGO_CFG_TARGET_OS").unwrap()
+            env::var("CARGO_CFG_TARGET_OS")
+                .map(|v| if v == "windows" {
+                    "mingw32".to_string()
+                } else {
+                    v
+                })
+                .unwrap()
         ));
     }
 
@@ -227,8 +233,8 @@ fn build() -> io::Result<()> {
         configure.arg("--disable-debug");
         configure.arg("--enable-stripping");
     }
-    if let Ok(v) = env::var("RUST_FFMPEG_PKGCONF"){
-        configure.arg(format!("--pkg-config={}",v));
+    if let Ok(v) = env::var("RUST_FFMPEG_PKGCONF") {
+        configure.arg(format!("--pkg-config={}", v));
     }
     // make it static
     configure.arg("--enable-static");
